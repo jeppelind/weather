@@ -2,14 +2,13 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import { getLocationFromCache, updateCache } from "../cache";
 
 const isCacheNotTooOld = (lastUpdate: number) => {
-    const maxAgeSeconds = 1800;
-    const currentTimeSeconds = Date.now() / 1000;
-    return (currentTimeSeconds - lastUpdate) < maxAgeSeconds;
+    const maxAgeSeconds = 1800 * 16;
+    const currentTime = Date.now();
+    lastUpdate = lastUpdate * 1000; // Fetched data is in seconds
+    return (currentTime - lastUpdate) < maxAgeSeconds;
 }
 
 export async function forecast(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    context.log(`Http function processed request for url "${request.url}"`);
-
     var location = request.query.get('location');
     if (!location) {
         return { status: 400, body: 'Missing location parameter' }
@@ -22,8 +21,8 @@ export async function forecast(request: HttpRequest, context: InvocationContext)
     }
 
     try {
-         const URL = `${process.env.API_SOURCE}/forecast.json?key=${process.env.API_KEY}&q=${location}`;
-         context.log(`Fetch from ${URL}`);
+        const URL = `${process.env.API_SOURCE}/forecast.json?key=${process.env.API_KEY}&q=${location}`;
+        context.log(`Fetch from ${URL}`);
         const res = await fetch(URL);
         if (!res.ok) {
             throw new Error('Network response was not ok');
