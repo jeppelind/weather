@@ -1,5 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { getLocationFromCache, updateCache } from "../cache";
+import { parseData } from "../provider/weatherapi";
 
 const cacheMaxAge = 30 * 60 * 1000;
 
@@ -17,7 +18,7 @@ export async function forecast(request: HttpRequest, context: InvocationContext)
     }
 
     const cachedData = getLocationFromCache(location);
-    if (cachedData && isCacheNotTooOld(cachedData.location.localtime_epoch)) {
+    if (cachedData && isCacheNotTooOld(cachedData.location.last_updated)) {
         context.log(`Fetched ${location} from cache`);
         return { jsonBody: cachedData }
     }
@@ -29,9 +30,10 @@ export async function forecast(request: HttpRequest, context: InvocationContext)
         if (!res.ok) {
             throw new Error('Network response was not ok');
         }
-        var data = await res.json();
-        updateCache(location, data);
-        return { jsonBody: data };
+        const data = await res.json();
+        const parsedData = parseData(data);
+        updateCache(location, parsedData);
+        return { jsonBody: parsedData };
     } catch (err) {
         return { status: 500, body: err }
     }
