@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
+  --foreground: text-slate-700;
+  --background: bg-slate-100;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground: text-slate-400;
+    --background: bg-slate-900;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+} */
+
+/* body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--background)
+    )
+    var(--background-start);
+} */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
