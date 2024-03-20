@@ -1,14 +1,16 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { getLocationFromCache, updateCache } from "../cache";
 
+const cacheMaxAge = 30 * 60 * 1000;
+
 const isCacheNotTooOld = (lastUpdate: number) => {
-    const maxAgeSeconds = 1800 * 16;
-    const currentTime = Date.now();
     lastUpdate = lastUpdate * 1000; // Fetched data is in seconds
-    return (currentTime - lastUpdate) < maxAgeSeconds;
+    return (Date.now() - lastUpdate) < cacheMaxAge;
 }
 
 export async function forecast(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+    context.log(`Http function processed request for url "${request.url}"`);
+
     var location = request.query.get('location');
     if (!location) {
         return { status: 400, body: 'Missing location parameter' }
