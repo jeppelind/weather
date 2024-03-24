@@ -23,7 +23,26 @@ type Forecast = {
     precip_mm: number,
     precip_in: number,
   },
-  forecast: {},
+  forecast: {
+    days: {
+      date: string,
+      maxtemp_c: number,
+      maxtemp_f: number,
+      mintemp_c: number,
+      mintemp_f: number,
+      daily_chance_of_rain: number,
+      code: number
+    }[],
+    hours: {
+      time_epoch: number,
+      time: string,
+      is_day: number,
+      temp_c: number,
+      temp_f: number,
+      chance_of_rain: number,
+      code: number
+    }[],
+  },
 }
 
 const getForecast = async (location: string) => {
@@ -40,20 +59,83 @@ const getForecast = async (location: string) => {
   return data;
 }
 
+const HourlyForecast = async ({ location, temp }: {location: string, temp: string}) => {
+  const data = await getForecast(location);
+  const elementArr: JSX.Element[] = [];
+  const timeNow = Date.now();
+  const startIdx = data.forecast.hours.findIndex(hour => hour.time_epoch > timeNow);
+
+  for (var i = startIdx; i < startIdx + 6; i++) { // Only show 6 upcoming hours
+    const hour = data.forecast.hours[i];
+    const time = new Date(hour.time);
+    elementArr.push(
+      <div className="flex items-center flex-col grow" key={hour.time_epoch}>
+        <div>{(temp === 'f') ? hour.temp_f : hour.temp_c}°</div>
+        <div className="text-4xl">
+          <WeatherIcon code={hour.code} isDay={hour.is_day === 1} />
+        </div>
+        <div className="text-xs">{time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <h2 className="text-slate-700 dark:text-slate-300 mb-2">Hourly forecast</h2>
+      <div className="flex">
+        {elementArr}
+      </div>
+    </>
+  );
+}
+
+const DailyForecast = async ({ location, temp }: {location: string, temp: string}) => {
+  const data = await getForecast(location);
+  
+  const getDayLabel = (dateStr: string) => {
+    const dayLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const date = new Date(dateStr);
+    if (date.getTime() > Date.now()) {
+      return dayLabels[date.getDay()];
+    }
+    return 'Today';
+  }
+
+  return (
+    <>
+      <h2 className="text-slate-700 dark:text-slate-300 mb-1">3-day forecast</h2>
+      <table className="min-w-full">
+        <tbody>
+          {
+            data.forecast.days.map((day, idx) => (
+              <tr key={idx}>
+                <td>{getDayLabel(day.date)}</td>
+                <td className="flex flex-col items-end text-3xl py-2"><WeatherIcon code={day.code} isDay={true} /></td>
+                <td className="text-right">{(temp === 'f') ? day.maxtemp_f : day.maxtemp_c}°/{(temp === 'f') ? day.maxtemp_f : day.mintemp_c}°</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </>
+  );
+}
+
 export default async function Home({
   searchParams
-}: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  console.log(searchParams)
+}: { searchParams: { [key: string]: string | undefined } }) {
   const { l, t } = searchParams;
+  const temp = t || 'c';
+  const location = l;
   
-  if (l && typeof l === 'string') {
+  if (location) {
     try {
-      const data = await getForecast(l);
+      const data = await getForecast(location);
       return (
         <main className="flex min-h-screen flex-col items-center pt-24">
           <p>{data.location.name}, {data.location.country}</p>
           <div className="text-8xl font-bold text-slate-800 dark:text-slate-200 m-4 mb-1">
-            {(t === 'f') ? data.current.temp_f : data.current.temp_c}°
+            {(temp === 'f') ? data.current.temp_f : data.current.temp_c}°
           </div>
           <div className="flex items-center text-lg text-slate-800 dark:text-slate-200">
             <span className="text-7xl">
@@ -61,9 +143,17 @@ export default async function Home({
             </span>
             {data.current.condition.text}
           </div>
-          <p>Feels like {(t === 'f') ? data.current.feelslike_f : data.current.feelslike_c}°</p>
+          <p>Feels like {(temp === 'f') ? data.current.feelslike_f : data.current.feelslike_c}°</p>
           <div className="mt-3">
-            High: {(t === 'f') ? data.current.maxtemp_f : data.current.maxtemp_c}° | Low: {(t === 'f') ? data.current.mintemp_f : data.current.mintemp_c}°
+            High: {(temp === 'f') ? data.current.maxtemp_f : data.current.maxtemp_c}° | Low: {(temp === 'f') ? data.current.mintemp_f : data.current.mintemp_c}°
+          </div>
+
+          <div className="mt-10 px-10 min-w-full sm:min-w-128">
+            <HourlyForecast location={location} temp={temp} />
+          </div>
+
+          <div className="mt-8 px-10 min-w-full sm:min-w-128">
+            <DailyForecast location={location} temp={temp} />
           </div>
         </main>
       )

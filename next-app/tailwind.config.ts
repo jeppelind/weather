@@ -8,7 +8,8 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
+      spacing: {
+        '128': '32rem',
       },
     },
   },
