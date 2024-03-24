@@ -3,7 +3,7 @@ import {
     WiDaySleet, WiDaySnow, WiDaySnowThunderstorm, WiDaySprinkle, WiDayStormShowers, WiDaySunny,
     WiFog, WiHail, WiNightAltCloudy, WiNightAltHail, WiNightAltLightning, WiNightAltRain,
     WiNightAltShowers, WiNightAltSleet, WiNightAltSnow, WiNightAltSnowThunderstorm, WiNightAltSprinkle,
-    WiNightAltStormShowers, WiNightClear, WiNightFog, WiRainMix, WiShowers, WiSleet, WiSnowWind,
+    WiNightAltStormShowers, WiNightClear, WiNightFog, WiRain, WiRainMix, WiShowers, WiSleet, WiSnowWind,
     WiSprinkle, WiStormShowers, WiThunderstorm
 } from "react-icons/wi";
 
@@ -28,6 +28,7 @@ const WeatherIcon = ({ code, isDay }: WeatherIconProps) => {
             return (isDay) ? <WiDayShowers /> : <WiNightAltShowers />;
         case 1066:
         case 1210:
+        case 1213:
         case 1216:
         case 1222:
         case 1255:
@@ -61,6 +62,8 @@ const WeatherIcon = ({ code, isDay }: WeatherIconProps) => {
         case 1243:
         case 1246:
             return (isDay) ? <WiDayRain /> : <WiNightAltRain />;
+        case 1195:
+            return <WiRain />
         case 1204:
         case 1207:
             return <WiSleet />;
