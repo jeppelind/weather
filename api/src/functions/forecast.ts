@@ -5,7 +5,6 @@ import { parseData } from "../provider/weatherapi";
 const cacheMaxAge = 30 * 60 * 1000;
 
 const isCacheNotTooOld = (lastUpdate: number) => {
-    lastUpdate = lastUpdate * 1000; // Fetched data is in seconds
     return (Date.now() - lastUpdate) < cacheMaxAge;
 }
 
@@ -24,7 +23,7 @@ export async function forecast(request: HttpRequest, context: InvocationContext)
     }
 
     try {
-        const URL = `${process.env.API_SOURCE}/forecast.json?key=${process.env.API_KEY}&q=${location}`;
+        const URL = `${process.env.API_SOURCE}/forecast.json?key=${process.env.API_KEY}&q=${location}&days=3&aqi=no&alerts=no`;
         context.log(`Fetch from ${URL}`);
         const res = await fetch(URL);
         if (!res.ok) {
