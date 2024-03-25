@@ -67,14 +67,13 @@ const HourlyForecast = async ({ location, temp }: {location: string, temp: strin
 
   for (var i = startIdx; i < startIdx + 6; i++) { // Only show 6 upcoming hours
     const hour = data.forecast.hours[i];
-    const time = new Date(hour.time);
     elementArr.push(
       <div className="flex items-center flex-col grow" key={hour.time_epoch}>
         <div>{(temp === 'f') ? hour.temp_f : hour.temp_c}°</div>
         <div className="text-4xl">
           <WeatherIcon code={hour.code} isDay={hour.is_day === 1} />
         </div>
-        <div className="text-xs">{time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+        <div className="text-xs">{hour.time.slice(-5)}</div>
       </div>
     );
   }
@@ -132,7 +131,7 @@ export default async function Home({
     try {
       const data = await getForecast(location);
       return (
-        <main className="flex min-h-screen flex-col items-center pt-24">
+        <main className="flex min-h-screen flex-col items-center pt-16">
           <p>{data.location.name}, {data.location.country}</p>
           <div className="text-8xl font-bold text-slate-800 dark:text-slate-200 m-4 mb-1">
             {(temp === 'f') ? data.current.temp_f : data.current.temp_c}°
@@ -144,11 +143,8 @@ export default async function Home({
             {data.current.condition.text}
           </div>
           <p>Feels like {(temp === 'f') ? data.current.feelslike_f : data.current.feelslike_c}°</p>
-          <div className="mt-3">
-            High: {(temp === 'f') ? data.current.maxtemp_f : data.current.maxtemp_c}° | Low: {(temp === 'f') ? data.current.mintemp_f : data.current.mintemp_c}°
-          </div>
 
-          <div className="mt-10 px-10 min-w-full sm:min-w-128">
+          <div className="mt-16 px-10 min-w-full sm:min-w-128">
             <HourlyForecast location={location} temp={temp} />
           </div>
 
