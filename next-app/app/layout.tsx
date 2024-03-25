@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const interTight = Inter_Tight({ subsets: ["latin"] });
 
@@ -16,7 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={interTight.className}>
-      <body className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">{children}</body>
+      <body className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-medium">
+        <Suspense fallback={<Loading />}>
+          {children}
+        </Suspense>
+      </body>
     </html>
   );
 }

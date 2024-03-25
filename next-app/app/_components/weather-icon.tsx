@@ -1,7 +1,8 @@
 import { 
-    WiCloud, WiDayCloudy, WiDayFog, WiDayHail, WiDayLightning, WiDayRain, WiDayShowers,
+    WiCloud, WiDayCloudy, WiDayFog, WiDayHail, WiDayLightning, WiDayRain, WiDayRainMix, WiDayShowers,
     WiDaySleet, WiDaySnow, WiDaySnowThunderstorm, WiDaySprinkle, WiDayStormShowers, WiDaySunny,
     WiFog, WiHail, WiNightAltCloudy, WiNightAltHail, WiNightAltLightning, WiNightAltRain,
+    WiNightAltRainMix,
     WiNightAltShowers, WiNightAltSleet, WiNightAltSnow, WiNightAltSnowThunderstorm, WiNightAltSprinkle,
     WiNightAltStormShowers, WiNightClear, WiNightFog, WiRain, WiRainMix, WiShowers, WiSleet, WiSnow, WiSnowWind,
     WiSprinkle, WiStormShowers, WiThunderstorm
@@ -65,8 +66,12 @@ const WeatherIcon = ({ code, isDay }: WeatherIconProps) => {
         case 1243:
         case 1246:
             return (isDay) ? <WiDayRain /> : <WiNightAltRain />;
+        case 1189:
         case 1195:
             return <WiRain />
+        case 1198:
+        case 1201:
+            return (isDay) ? <WiDayRainMix /> : <WiNightAltRainMix />
         case 1204:
         case 1207:
             return <WiSleet />;
