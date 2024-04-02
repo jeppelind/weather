@@ -106,8 +106,8 @@ const HourlyForecast = async ({ location, temp }: SearchParams) => {
     const hour = data.forecast.hours[i];
     elementArr.push(
       <div className="flex items-center flex-col grow" key={hour.time_epoch}>
-        <div>{(temp === 'f') ? hour.temp_f : hour.temp_c}°</div>
-        <div className="text-4xl">
+        <div className="text-slate-700 dark:text-slate-300 ">{(temp === 'f') ? hour.temp_f : hour.temp_c}°</div>
+        <div className="text-slate-700 dark:text-slate-300 text-4xl">
           <WeatherIcon code={hour.code} isDay={hour.is_day === 1} />
         </div>
         <div className="text-xs">{hour.time.slice(-5)}</div>
@@ -117,7 +117,7 @@ const HourlyForecast = async ({ location, temp }: SearchParams) => {
 
   return (
     <>
-      <h2 className="text-slate-700 dark:text-slate-300 mb-2">Hourly forecast</h2>
+      <h2 className="mb-2 text-lg">Hourly forecast</h2>
       <div className="flex">
         {elementArr}
       </div>
@@ -142,15 +142,18 @@ const DailyForecast = async ({ location, temp }: SearchParams) => {
 
   return (
     <>
-      <h2 className="text-slate-700 dark:text-slate-300 mb-1">3-day forecast</h2>
+      <h2 className="mb-1 text-lg">3-day forecast</h2>
       <table className="min-w-full">
         <tbody>
           {
             data.forecast.days.map((day, idx) => (
               <tr key={idx}>
-                <td>{getDayLabel(day.date)}</td>
-                <td className="flex flex-col items-end text-3xl py-2"><WeatherIcon code={day.code} isDay={true} /></td>
-                <td className="text-right">{(temp === 'f') ? day.maxtemp_f : day.maxtemp_c}°/{(temp === 'f') ? day.maxtemp_f : day.mintemp_c}°</td>
+                <td className="text-slate-700 dark:text-slate-300 ">{getDayLabel(day.date)}</td>
+                <td className="flex flex-col items-end text-3xl py-2 text-slate-700 dark:text-slate-300 "><WeatherIcon code={day.code} isDay={true} /></td>
+                <td className="text-right">
+                  <span className="text-slate-700 dark:text-slate-300 ">{(temp === 'f') ? day.maxtemp_f : day.maxtemp_c}°</span>
+                  <span>/{(temp === 'f') ? day.maxtemp_f : day.mintemp_c}°</span>
+                </td>
               </tr>
             ))
           }
